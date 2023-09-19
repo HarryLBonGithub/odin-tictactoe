@@ -1,8 +1,6 @@
 console.log("--SCRIPT CONNECTED--");
 
-const board = (() =>{
-
-    const boardGrid = document.querySelector("#board-grid");
+const boardCreator= () =>{
 
     const grid = [
         [" "," "," "],
@@ -10,6 +8,69 @@ const board = (() =>{
         [" "," "," "]
     ];
 
+    const getBoard = () => {
+        return grid;
+    }
+
+    const addMark = (row, column, player)=>{
+        if (grid[row][column] != " ") {
+            return;
+        }; 
+        
+        grid[row][column] = player.symbol;
+    };
+
+    const printBoard = () => {
+        grid.forEach(row => {
+            console.log(row);
+        });
+    };
+
+    return {getBoard, addMark, printBoard};
+};
+
+const playerCreator = (name, symbol) => {
+    
+    return {name, symbol};
+};
+
+const GMCreator = () =>{
+    const board = boardCreator();
+
+    const playerOne = playerCreator("p1", "X");
+    const playerTwo = playerCreator("p2", "O");
+
+    const players = [playerOne, playerTwo];
+
+    let activePlayer = players[0];
+
+    const switchPlayerTurn = () =>{
+        if (activePlayer == players[0]){
+            activePlayer = players[1];
+        } else {
+            activePlayer = players[0];
+        };
+    };
+
+    const getActivePlayer = () => {
+        return activePlayer;
+    }
+
+    const printNewRound = () => {
+        board.printBoard();
+        console.log(`${getActivePlayer().name}'s turn.`);
+    };
+    
+    const playRound = () => {
+
+    };
+
+    board.printBoard();
+};
+
+const screenControl = () => {
+    const boardGrid = document.querySelector("#board-grid");
+    
     const display = () =>{
         
         for (let row =0; row <3; row++) {
@@ -38,26 +99,14 @@ const board = (() =>{
             boardGrid.removeChild(row);
         });
     };
+}
 
-    const addMark = (row, column, player)=>{
-        grid[row][column] = player.symbol;
-    }
-
-    return {grid, display, clear, addMark};
-})();
-
-const playerCreator = (name, symbol) => {
-    
-    const playTurn = () =>{
-        console.log(`Player ${name} is using ${symbol}`);
-    }
-
-    return {name, symbol};
-};
+const GM = GMCreator();
 
 
 
-board.display();
-const playerOne = playerCreator("p1", "X");
+
+
+
 
 
