@@ -114,7 +114,7 @@ const GMCreator = () =>{
         /*check diag "/" for win */
         matchCount = 0;
 
-        for(let row = 2; i > -1; row--){
+        for(let row = 2; row > -1; row--){
             for(let col = 0; col <3; col++){
                 if (board.getBoard()[row][col] == targetSymbol){
                     matchCount +=1;
@@ -131,19 +131,27 @@ const GMCreator = () =>{
 
     const playRound = () => {
 
-        let winner = '';
+        let winner = "";
 
         do{
-            let targetRow = prompt(`${getActivePlayer()} choose Row.`);
-            let targetColumn = prompt(`${getActivePlayer()} choose Column.`);
+            let targetRow = prompt(`${activePlayer.name} choose Row.`);
+            let targetColumn = prompt(`${activePlayer.name} choose Column.`);
             board.addMark(targetRow,targetColumn, getActivePlayer());
 
-            /*check for winner*/
+            if (checkForWinner(activePlayer) == true){
+                console.log(`${activePlayer.name} wins!`);
+                winner = activePlayer;
+            };
+
+            switchPlayerTurn();
+            printNewRound();
 
         }while(winner == "");
     };
 
-    board.printBoard();
+    playRound();
+
+    return{playRound, getActivePlayer}
 };
 
 const screenControl = () => {
