@@ -129,48 +129,43 @@ const GMCreator = () =>{
         return false;
     }
 
-    const playRound = () => {
+    const playRound = (targetRow, targetColumn) => {
 
-        let winner = "";
+        board.addMark(targetRow,targetColumn, getActivePlayer());
+        
+        console.log(`Adding ${getActivePlayer().symbol} at ${targetRow},${targetColumn}`);
 
-        do{
-            let targetRow = prompt(`${activePlayer.name} choose Row.`);
-            let targetColumn = prompt(`${activePlayer.name} choose Column.`);
-            board.addMark(targetRow,targetColumn, getActivePlayer());
-
-            if (checkForWinner(activePlayer) == true){
-                console.log(`${activePlayer.name} wins!`);
-                winner = activePlayer;
-            };
-
-            switchPlayerTurn();
-            printNewRound();
-
-        }while(winner == "");
+        switchPlayerTurn();
+        printNewRound();
     };
 
-    playRound();
-
-    return{playRound, getActivePlayer}
+    return{playRound, getActivePlayer, board}
 };
 
 const screenControl = () => {
+    const GM = GMCreator();
     const boardGrid = document.querySelector("#board-grid");
+    const turnIndicator = document.querySelector("#turn-indicator");
+
     
     const display = () =>{
+
+        const board = GM.board.getBoard();
+        const currentPlayer = GM.getActivePlayer();
+
+        turnIndicator.textContent = `${currentPlayer.name}'s turn`;
         
         for (let row =0; row <3; row++) {
 
             let newRow = document.createElement("div");
             newRow.classList.add('row');
 
-
             for(let column = 0; column <3; column++){
-                let newGridSpot = document.createElement("div");
-                newGridSpot.textContent = grid[row][column];
+                let newGridSpot = document.createElement("button");
+                newGridSpot.textContent = board[row][column];
                 newGridSpot.classList.add('game-space');
-                newGridSpot.setAttribute('row', row);
-                newGridSpot.setAttribute('column', column);
+                newGridSpot.setAttribute('data-row', row);
+                newGridSpot.setAttribute('data-column', column);
 
                 newRow.appendChild(newGridSpot);
             };
@@ -185,10 +180,28 @@ const screenControl = () => {
             boardGrid.removeChild(row);
         });
     };
-}
 
-const GM = GMCreator();
+    function clickHandler(e){
+        let selectedRow = e.target.dataset.row;
+        let selectedColumn = e.target.dataset.column;
+        if (!selectedRow) return;
+        if (!selectedColumn) return;
 
+        const currentPlayer = GM.getActivePlayer();
+        
+        GM.playRound(selectedRow,selectedColumn,currentPlayer);
+        clear();
+        display();
+    }
+
+    boardGrid.addEventListener("click",clickHandler);
+
+
+    display();
+};
+
+
+screenControl();
 
 
 
